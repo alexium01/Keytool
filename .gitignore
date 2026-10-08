@@ -1,0 +1,13 @@
+# Entornos virtuales
+.venv/
+venv/
+ENV/
+
+# Archivos de caché de Python
+__pycache__/
+*.pyc
+
+# Archivos criptográficos generados en pruebas
+*.p12
+*.csr
+*.crt
