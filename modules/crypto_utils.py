@@ -1,9 +1,8 @@
 import datetime
 from cryptography import x509
 from cryptography.x509.oid import NameOID
-from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization
 
 def generate_rsa_keypair(key_size: int = 2048) -> rsa.RSAPrivateKey:
     """Genera una clave privada RSA de la longitud solicitada (2048 bits)."""
@@ -13,7 +12,7 @@ def generate_rsa_keypair(key_size: int = 2048) -> rsa.RSAPrivateKey:
     )
 
 def build_distinguished_name(dn_data: dict) -> x509.Name:
-    """Construye la entidad X.509 a partir de los datos ingresados por el usuario."""
+    """Construye la entidad X.509 a partir de los datos introducidos."""
     attributes = []
     mapping = [
         ("CN", NameOID.COMMON_NAME),
@@ -32,7 +31,7 @@ def build_distinguished_name(dn_data: dict) -> x509.Name:
 def create_self_signed_certificate(private_key: rsa.RSAPrivateKey, subject: x509.Name, days_valid: int = 365) -> x509.Certificate:
     """Crea un certificado X.509 autofirmado necesario para almacenar la clave en PKCS#12."""
     now = datetime.datetime.now(datetime.timezone.utc)
-    cert = (
+    return (
         x509.CertificateBuilder()
         .subject_name(subject)
         .issuer_name(subject)
@@ -43,7 +42,6 @@ def create_self_signed_certificate(private_key: rsa.RSAPrivateKey, subject: x509
         .add_extension(x509.BasicConstraints(ca=False, path_length=None), critical=True)
         .sign(private_key, hashes.SHA256())
     )
-    return cert
 
 def generate_csr_pem(private_key: rsa.RSAPrivateKey, subject: x509.Name) -> bytes:
     """Genera la solicitud de firma (CSR) y la devuelve serializada en formato PEM."""
