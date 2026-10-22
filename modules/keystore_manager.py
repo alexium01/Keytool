@@ -31,3 +31,10 @@ def save_keystore(keystore_path: str, alias: str, private_key, certificate, pass
     
     with open(keystore_path, "wb") as f:
         f.write(p12_bytes)
+
+def check_alias_exists(keystore_path: str, password: str, alias: str) -> bool:
+    """Verifica si el almacén ya existe y se puede leer."""
+    if not os.path.exists(keystore_path):
+        return False
+    load_keystore(keystore_path, password)
+    return True
